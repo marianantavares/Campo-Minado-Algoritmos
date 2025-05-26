@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CAMPO MINADO</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- TELA DE INÍCIO -->
+  <div id="start-screen">
+    <h1>Campo Minado</h1>
+    <label for="size">Tamanho do mapa:</label>
+    <select id="size">
+      <option value="8">8×8</option>
+      <option value="12">12×12</option>
+      <option value="16">16×16</option>
+    </select>
+    <button id="startBtn" class="btn primary">Jogar</button>
+    <button id="aboutBtn" class="btn secondary">Sobre</button>
+  </div>
+
+  <!-- TELA DE SOBRE -->
+  <div id="about-modal" class="modal hidden">
+    <div class="modal-content">
+      <span id="closeModal" class="close-btn">&times;</span>
+      <h2>Sobre o Jogo</h2>
+      <p>Controle um carrinho que parte do bloco inicial (verde) até o bloco final (roxo).</p>
+      <ul>
+        <li><strong>Vazios:</strong> blocos comuns.</li>
+        <li><strong>Bombas:</strong> pretas, reduzem vida ou consomem escudo.</li>
+        <li><strong>Escudos:</strong> azuis, protegem de uma bomba.</li>
+        <li><strong>Passos:</strong> quantos blocos já andou.</li>
+        <li><strong>Tempo:</strong> minutos e segundos desde o início.</li>
+        <li>Use <strong>W A S D</strong> para mover; botão "Pular" para ignorar colisão.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- TELA DE JOGO -->
+  <div id="game-screen" class="screen hidden">
+    <div class="game-area">
+      <canvas id="gameCanvas"></canvas>
+      <div id="info-panel">
+        <div><strong>Passos:</strong> <span id="stepsCount">0</span></div>
+        <div><strong>Vidas:</strong> <span id="health">3</span></div>
+        <div><strong>Escudos:</strong> <span id="shield">0</span></div>
+        <div><strong>Tempo:</strong> <span id="timer">00:00</span></div>
+        <button id="skipBtn" class="btn secondary">Pular</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA FINAL -->
+  <div id="end-screen" class="screen hidden">
+    <h2>Resultados</h2>
+    <div><strong>Tempo total:</strong> <span id="endTime"></span></div>
+    <div><strong>Bombas explodidas:</strong> <span id="bombCount"></span></div>
+    <div><strong>Passos:</strong> <span id="endSteps"></span></div>
+    <p id="resultText" class="result"></p>
+    <button id="restartBtn" class="btn primary">Reiniciar</button>
+    <button id="backToMenuFromEnd" class="btn secondary">Voltar ao Menu</button>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+/* Reset e básico */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background: #1e1e2f;
+  color: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.screen {
+  width: 100%;
+  max-width: 480px;
+  padding: 20px;
+  text-align: center;
+}
+.hidden { display: none; }
+
+/* Títulos */
+h1 { font-size: 2.5rem; margin-bottom: 1rem; color: #4ee1ff; }
+h2 { font-size: 2rem; margin-bottom: 1rem; color: #ffd93d; }
+
+/* Controles iniciais */
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.controls label {
+  font-size: 1rem;
+}
+.controls select {
+  padding: 0.5rem;
+  background: #2d2d44;
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: #e0e0e0;
+  font-size: 1rem;
+}
+
+/* Botões */
+.btn {
+  padding: 0.75rem 1.5rem;
+  margin: 0.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-group { display: flex; justify-content: center; gap: 1rem; }
+.primary {
+  background: #4ee1ff;
+  color: #1e1e2f;
+}
+.primary:hover {
+  background: #3ecfe0;
+}
+.secondary {
+  background: #ffd93d;
+  color: #1e1e2f;
+}
+.secondary:hover {
+  background: #e6c02c;
+}
+
+/* Modal Sobre */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-in;
+}
+/* quando tiver classe .show, exibe */
+.modal.show {
+  display: flex;
+}
+.modal-content {
+  background: #2d2d44;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  text-align: left;
+  color: #e0e0e0;
+  animation: slideIn 0.3s ease-out;
+}
+.close-btn {
+  float: right;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Jogo */
+.game-area {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: center;
+}
+#gameCanvas {
+  background: #2d2d44;
+  border: 4px solid #555;
+  box-shadow: 0 0 10px #000;
+  animation: slideIn 0.5s ease-in-out;
+}
+#info-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: left;
+  font-size: 1rem;
+}
+#info-panel div {
+  padding: 4px 0;
+}
+.result {
+  margin: 1rem 0;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #4ee1ff;
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.5rem; }
+  .screen { padding: 10px; }
+  .btn { font-size: 0.875rem; padding: 0.5rem 1rem; }
+  #gameCanvas { width: 100%; height: auto; }
+  #info-panel { align-items: center; }
+}
+@media (max-width: 400px) {
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.25rem; }
+  .btn { font-size: 0.75rem; padding: 0.5rem; }
+  #info-panel { font-size: 0.875rem; }
+}

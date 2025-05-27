@@ -1,54 +1,37 @@
 // main.js
+import { Game }       from './game.js';
+import { formatTime } from './utils.js';
 
 const startScreen = document.getElementById('start-screen');
 const gameScreen = document.getElementById('game-screen');
-const endScreen = document.getElementById('end-screen');
-const aboutModal = document.getElementById('about-modal');
-const closeModal = document.getElementById('closeModal');
-const startBtn = document.getElementById('startBtn');
-const aboutBtn = document.getElementById('aboutBtn');
-const restartBtn = document.getElementById('restartBtn');
-const backBtn = document.createElement('button');
-backBtn.innerText = 'Voltar';
-backBtn.className = 'btn secondary';
+const endScreen   = document.getElementById('end-screen');
+const aboutModal  = document.getElementById('about-modal');
 
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+const startBtn = document.getElementById('startBtn');
+
+const sizeSelect  = document.getElementById('size');
+
+const canvas      = document.getElementById('gameCanvas');
+const ctx         = canvas.getContext('2d');
+
+const stepsEl  = document.getElementById('stepsCount');
+const healthEl = document.getElementById('health');
+const shieldEl = document.getElementById('shield');
+const timerEl  = document.getElementById('timer');
 
 let game = null;
 
-// Eventos
+// inicia
 startBtn.addEventListener('click', () => {
   startScreen.classList.add('hidden');
   gameScreen.classList.remove('hidden');
-  document.getElementById('info-panel').appendChild(backBtn);
-  startGame();
-});
 
-aboutBtn.addEventListener('click', () => {
-  aboutModal.classList.remove('hidden');
-});
-
-closeModal.addEventListener('click', () => {
-  aboutModal.classList.add('hidden');
-});
-
-restartBtn.addEventListener('click', () => {
-  endScreen.classList.add('hidden');
-  startScreen.classList.remove('hidden');
-});
-
-backBtn.addEventListener('click', () => {
-  gameScreen.classList.add('hidden');
-  startScreen.classList.remove('hidden');
-});
-
-function startGame() {
-  const size = parseInt(document.getElementById('size').value);
-  game = new Game(size);
+  const size = parseInt(sizeSelect.value, 10);
+  game = new Game(size, 3);
   resizeCanvas(size);
-  gameLoop();
-}
+  // inicia contagem de tempo e loop de render
+  requestAnimationFrame(gameLoop);
+});
 
 function resizeCanvas(size) {
   const tileSize = 40;
@@ -56,78 +39,77 @@ function resizeCanvas(size) {
   canvas.height = size * tileSize;
 }
 
+const backBtn = document.createElement('button');
+backBtn.innerText = 'Voltar';
+backBtn.className = 'btn secondary';
+
+startBtn.addEventListener('click', () => {
+  // ... mostra a tela de jogo ...
+  document.getElementById('info-panel').appendChild(backBtn);
+  startGame();
+});
+
+backBtn.addEventListener('click', () => {
+  gameScreen.classList.add('hidden');
+  startScreen.classList.remove('hidden');
+});
+
+
 function gameLoop() {
-  renderer.clear();
-  renderer.drawGrid(game);
-  requestAnimationFrame(gameLoop);
+  // Limpa e redesenha o grid
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawGrid(game);
+  updateStats();
+
+  if (!game.isOver()) {
+    requestAnimationFrame(gameLoop);
+  } else {
+    // aqui você pode passar para a tela de fim de jogo
+    console.log('Game Over!', game.getStats());
+  }
 }
 
-// renderer.js
+//desenha o grid
+function drawGrid(game) {
+  const tileSize = 40;
+  for (let y = 0; y < game.size; y++) {
+    for (let x = 0; x < game.size; x++) {
+      ctx.strokeStyle = '#000';
+      ctx.strokeRect(x*tileSize, y*tileSize, tileSize, tileSize);
 
-const renderer = {
-  clear() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  },
-
-  drawGrid(game) {
-    const tileSize = 40;
-    for (let y = 0; y < game.size; y++) {
-      for (let x = 0; x < game.size; x++) {
-        ctx.strokeStyle = '#000';
-        ctx.strokeRect(x * tileSize, y * tileSize, tileSize, tileSize);
-
-        const cell = game.map[y][x];
-        if (cell === 'start') {
-          ctx.fillStyle = 'green';
-          ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
-        } else if (cell === 'end') {
-          ctx.fillStyle = 'purple';
-          ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
-        } else if (cell === 'bomb') {
-          ctx.fillStyle = 'black';
-          ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
-        } else if (cell === 'shield') {
-          ctx.fillStyle = 'blue';
-          ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
-        }
+      const tile = game.map[y][x];
+      switch (tile.type) {
+        case 'bomb':   ctx.fillStyle = 'black';   break;
+        case 'shield': ctx.fillStyle = 'blue';    break;
+        default:       ctx.fillStyle = '#2d2d44'; break;
       }
+      ctx.fillRect(x*tileSize, y*tileSize, tileSize, tileSize);
     }
-
-    // Player
-    ctx.fillStyle = 'red';
-    ctx.fillRect(game.player.x * tileSize, game.player.y * tileSize, tileSize, tileSize);
   }
-};
-
-// game.js
-
-class Game {
-  constructor(size) {
-    this.size = size;
-    this.map = this.generateMap(size);
-    this.player = { x: 0, y: 0 };
-  }
-
-  generateMap(size) {
-    const map = Array.from({ length: size }, () => Array(size).fill('empty'));
-
-    map[0][0] = 'start';
-    map[size - 1][size - 1] = 'end';
-
-    // Bombas
-    for (let i = 0; i < Math.floor(size * 1.5); i++) {
-      const x = Math.floor(Math.random() * size);
-      const y = Math.floor(Math.random() * size);
-      if (map[y][x] === 'empty') map[y][x] = 'bomb';
-    }
-
-    // Escudos
-    for (let i = 0; i < Math.floor(size); i++) {
-      const x = Math.floor(Math.random() * size);
-      const y = Math.floor(Math.random() * size);
-      if (map[y][x] === 'empty') map[y][x] = 'shield';
-    }
-
-    return map;
-  }
+  // carrinho
+  ctx.fillStyle = 'red';
+  ctx.fillRect(
+    game.player.x * tileSize,
+    game.player.y * tileSize,
+    tileSize, tileSize
+  );
 }
+
+// Atualiza os valores do painel
+function updateStats() {
+  const s = game.getStats();
+  stepsEl.innerText  = s.steps;
+  healthEl.innerText = s.health;
+  shieldEl.innerText = s.shield;
+  timerEl.innerText  = formatTime(s.time);
+}
+
+// Captura WASD
+document.addEventListener('keydown', e => {
+  if (!game || game.isOver()) return;
+  const k = e.key.toUpperCase();
+  if (['W','A','S','D'].includes(k)) {
+    game.move(k);
+    updateStats();
+  }
+});

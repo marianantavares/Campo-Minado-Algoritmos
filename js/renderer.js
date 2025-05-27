@@ -14,11 +14,6 @@ export function setSpriteSheet(img) {
   spriteSheet = img;
 }
 
-/**
- * Desenha o mapa e o carrinho.
- * @param {Game} game
- * @param {CanvasRenderingContext2D} ctx
- */
 export function draw(game, ctx) {
   const size = game.size;
   const tileW = ctx.canvas.width / size;
@@ -35,7 +30,7 @@ export function draw(game, ctx) {
         default:           sx = 0;  sy = 0; break;
       }
       // Desenha o sprite do tile
-      ctx.drawImage(spriteSheet, sx, sy, 32, 32, x*tileW, y*tileH, tileW, tileH);
+      ctx.drawImage(spriteSheet, sx, sy, 32, 32, x * tileW, y * tileH, tileW, tileH);
     }
   }
 

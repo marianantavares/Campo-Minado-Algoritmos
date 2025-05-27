@@ -70,7 +70,7 @@ class Player {
 
 // Gerencia o estado do jogo
 export class Game {
-  constructor(size, maxDamage) {
+  constructor(size, maxDamage = 3 ) {
     this.size = size;                  // tamanho do mapa (req 6)
     this.player = new Player(maxDamage);
     this.map = this._createMap(size);  // matriz Tile[][] (req 1,4)
@@ -91,6 +91,7 @@ export class Game {
     // Sorteia bombas (20% dos tijolos)
     const total = size * size;
     const numBombs = Math.floor(total * 0.2);
+    
     for (let i = 0; i < numBombs; i++) {
       let bx, by;
       do {
@@ -114,11 +115,6 @@ export class Game {
     return map;
   }
 
-  /**
-   * Move o carrinho.
-   * @param {string} dir - 'W','A','S','D'
-   * @param {boolean} jump - se true, pula o próximo tile (req 9)
-   */
   move(dir, jump = false) {
     if (!this.player.isAlive()) return;
 

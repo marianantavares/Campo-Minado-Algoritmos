@@ -1,115 +1,186 @@
-// main.js
-import { Game }       from './game.js';
-import { formatTime } from './utils.js';
+// js/main.js
+import { Game } from './game.js';
+import { formatTime, randInt } from './utils.js';
+import { drawGrid } from './renderer.js';
 
-const startScreen = document.getElementById('start-screen');
-const gameScreen = document.getElementById('game-screen');
-const endScreen   = document.getElementById('end-screen');
-const aboutModal  = document.getElementById('about-modal');
+// 1. Garanta que o DOM está completamente carregado
+document.addEventListener('DOMContentLoaded', () => {
+  // 2. Elementos DOM - verifique se todos existem
+  const startScreen = document.getElementById('start-screen');
+  const gameScreen = document.getElementById('game-screen');
+  const endScreen = document.getElementById('end-screen');
+  const aboutModal = document.getElementById('about-modal');
+  const closeModal = document.getElementById('closeModal');
+  
+  const startBtn = document.getElementById('startBtn');
+  const aboutBtn = document.getElementById('aboutBtn');
+  const restartBtn = document.getElementById('restartBtn');
+  const sizeSelect = document.getElementById('size');
+  
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  
+  const stepsEl = document.getElementById('stepsCount');
+  const healthEl = document.getElementById('health');
+  const shieldEl = document.getElementById('shield');
+  const timerEl = document.getElementById('timer');
+  
+  const skipBtn = document.getElementById('skipBtn');
+  
+  // 3. Botão Voltar
+  const backBtn = document.createElement('button');
+  backBtn.innerText = 'Voltar';
+  backBtn.className = 'btn secondary';
+  
+  let game = null;
+  let gameLoopId = null;
+  let lastTime = 0;
 
-const startBtn = document.getElementById('startBtn');
+  // 4. Evento do botão Jogar - versão corrigida
+  startBtn.addEventListener('click', () => {
+    console.log('Botão Jogar clicado!'); // Debug
+    
+    startScreen.classList.add('hidden');
+    gameScreen.classList.remove('hidden');
+    
+    const size = parseInt(sizeSelect.value, 10);
+    console.log(`Iniciando jogo com tamanho: ${size}`); // Debug
+    
+    // Inicializa o jogo
+    game = new Game(size, 3);
+    resizeCanvas(size);
+    
+    // Adiciona botão Voltar
+    const infoPanel = document.getElementById('info-panel');
+    if (!infoPanel.querySelector('.btn.secondary')) {
+      infoPanel.appendChild(backBtn);
+    }
+    
+    // Inicia o game loop
+    lastTime = performance.now();
+    if (gameLoopId) cancelAnimationFrame(gameLoopId);
+    gameLoopId = requestAnimationFrame(gameLoop);
+  });
 
-const sizeSelect  = document.getElementById('size');
-
-const canvas      = document.getElementById('gameCanvas');
-const ctx         = canvas.getContext('2d');
-
-const stepsEl  = document.getElementById('stepsCount');
-const healthEl = document.getElementById('health');
-const shieldEl = document.getElementById('shield');
-const timerEl  = document.getElementById('timer');
-
-let game = null;
-
-// inicia
-startBtn.addEventListener('click', () => {
-  startScreen.classList.add('hidden');
-  gameScreen.classList.remove('hidden');
-
-  const size = parseInt(sizeSelect.value, 10);
-  game = new Game(size, 3);
-  resizeCanvas(size);
-  // inicia contagem de tempo e loop de render
-  requestAnimationFrame(gameLoop);
-});
-
-function resizeCanvas(size) {
-  const tileSize = 40;
-  canvas.width = size * tileSize;
-  canvas.height = size * tileSize;
-}
-
-const backBtn = document.createElement('button');
-backBtn.innerText = 'Voltar';
-backBtn.className = 'btn secondary';
-
-startBtn.addEventListener('click', () => {
-  // ... mostra a tela de jogo ...
-  document.getElementById('info-panel').appendChild(backBtn);
-  startGame();
-});
-
-backBtn.addEventListener('click', () => {
-  gameScreen.classList.add('hidden');
-  startScreen.classList.remove('hidden');
-});
-
-
-function gameLoop() {
-  // Limpa e redesenha o grid
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawGrid(game);
-  updateStats();
-
-  if (!game.isOver()) {
-    requestAnimationFrame(gameLoop);
-  } else {
-    // aqui você pode passar para a tela de fim de jogo
-    console.log('Game Over!', game.getStats());
+  // 5. Função resizeCanvas
+  function resizeCanvas(size) {
+    const tileSize = 40;
+    canvas.width = size * tileSize;
+    canvas.height = size * tileSize;
+    console.log(`Canvas redimensionado para: ${canvas.width}x${canvas.height}`); // Debug
   }
-}
 
-//desenha o grid
-function drawGrid(game) {
-  const tileSize = 40;
-  for (let y = 0; y < game.size; y++) {
-    for (let x = 0; x < game.size; x++) {
-      ctx.strokeStyle = '#000';
-      ctx.strokeRect(x*tileSize, y*tileSize, tileSize, tileSize);
+  // 6. Botão Voltar
+  backBtn.addEventListener('click', () => {
+    gameScreen.classList.add('hidden');
+    startScreen.classList.remove('hidden');
+    if (gameLoopId) cancelAnimationFrame(gameLoopId);
+    gameLoopId = null;
+  });
 
-      const tile = game.map[y][x];
-      switch (tile.type) {
-        case 'bomb':   ctx.fillStyle = 'black';   break;
-        case 'shield': ctx.fillStyle = 'blue';    break;
-        default:       ctx.fillStyle = '#2d2d44'; break;
-      }
-      ctx.fillRect(x*tileSize, y*tileSize, tileSize, tileSize);
+  // 7. Game loop corrigido
+  function gameLoop(timestamp) {
+    if (!game) return;
+    
+    const deltaTime = timestamp - lastTime;
+    lastTime = timestamp;
+    
+    // Atualiza o tempo do jogo
+    if (!game.isOver()) {
+      gameLoopId = requestAnimationFrame(gameLoop);
+    }
+    
+    // Limpa e desenha
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawGrid(game, ctx);
+    updateStats();
+    
+    // Verifica fim de jogo
+    if (game.isOver()) {
+      endGame();
     }
   }
-  // carrinho
-  ctx.fillStyle = 'red';
-  ctx.fillRect(
-    game.player.x * tileSize,
-    game.player.y * tileSize,
-    tileSize, tileSize
-  );
-}
 
-// Atualiza os valores do painel
-function updateStats() {
-  const s = game.getStats();
-  stepsEl.innerText  = s.steps;
-  healthEl.innerText = s.health;
-  shieldEl.innerText = s.shield;
-  timerEl.innerText  = formatTime(s.time);
-}
-
-// Captura WASD
-document.addEventListener('keydown', e => {
-  if (!game || game.isOver()) return;
-  const k = e.key.toUpperCase();
-  if (['W','A','S','D'].includes(k)) {
-    game.move(k);
-    updateStats();
+  // 8. Atualizar estatísticas
+  function updateStats() {
+    if (!game) return;
+    
+    const s = game.getStats();
+    stepsEl.textContent = s.steps;
+    healthEl.textContent = s.health;
+    shieldEl.textContent = s.shield;
+    timerEl.textContent = formatTime(s.time);
   }
+
+  // 9. Finalizar jogo
+  function endGame() {
+    console.log('Fim de jogo detectado');
+    gameScreen.classList.add('hidden');
+    endScreen.classList.remove('hidden');
+    
+    const stats = game.getStats();
+    document.getElementById('endTime').textContent = formatTime(stats.time);
+    document.getElementById('bombCount').textContent = stats.bombsExploded;
+    document.getElementById('endSteps').textContent = stats.steps;
+    document.getElementById('resultText').textContent = 
+      stats.health > 0 ? 'Você venceu!' : 'Game Over!';
+  }
+
+  // 10. Controles de teclado
+  document.addEventListener('keydown', e => {
+    if (!game || game.isOver()) return;
+    
+    const k = e.key.toUpperCase();
+    if (['W','A','S','D'].includes(k)) {
+      game.move(k);
+      updateStats();
+    }
+  });
+
+  // 11. Botão Pular
+  skipBtn.addEventListener('click', () => {
+    if (game && !game.isOver()) {
+      game.skipCollision();
+      updateStats();
+    }
+  });
+
+  // 12. Botão Sobre
+  aboutBtn.addEventListener('click', () => {
+    aboutModal.classList.remove('hidden');
+  });
+
+  // 13. Fechar Modal
+  closeModal.addEventListener('click', () => {
+    aboutModal.classList.add('hidden');
+  });
+
+  // 14. Fechar modal ao clicar fora
+  window.addEventListener('click', (e) => {
+    if (e.target === aboutModal) {
+      aboutModal.classList.add('hidden');
+    }
+  });
+
+  // 15. Botão Reiniciar
+  restartBtn.addEventListener('click', () => {
+    endScreen.classList.add('hidden');
+    gameScreen.classList.remove('hidden');
+    
+    const size = game.size;
+    game = new Game(size, 3);
+    resizeCanvas(size);
+    
+    if (gameLoopId) cancelAnimationFrame(gameLoopId);
+    lastTime = performance.now();
+    gameLoopId = requestAnimationFrame(gameLoop);
+  });
+
+  // 16. Voltar ao Menu (da tela final)
+  document.getElementById('backToMenuFromEnd').addEventListener('click', () => {
+    endScreen.classList.add('hidden');
+    startScreen.classList.remove('hidden');
+  });
+
+  console.log('Script carregado com sucesso!'); // Debug
 });

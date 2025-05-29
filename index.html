@@ -1,23 +1,29 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CAMPO MINADO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <!-- TELA DE INÍCIO -->
-  <div id="start-screen">
-    <h1>Campo Minado</h1>
-    <label for="size">Tamanho do mapa:</label>
-    <select id="size">
-      <option value="8">8×8</option>
-      <option value="12">12×12</option>
-      <option value="16">16×16</option>
-    </select>
-    <button id="startBtn" class="btn primary">Jogar</button>
-    <button id="aboutBtn" class="btn secondary">Sobre</button>
+  <div id="start-screen" class="menu-card">
+    <h1 class="pixel-font">Campo Minado</h1>
+    <div class="menu-options">
+      <label for="size">Tamanho do mapa:</label>
+      <select id="size">
+        <option value="8">8×8</option>
+        <option value="12">12×12</option>
+        <option value="16">16×16</option>
+      </select>
+      <button id="startBtn" class="btn primary pixel-font">Jogar</button>
+      <button id="aboutBtn" class="btn secondary pixel-font">Sobre</button>
+    </div>
   </div>
 
   <!-- TELA DE SOBRE -->

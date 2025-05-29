@@ -1,41 +1,40 @@
 // renderer.js
-// Desenha o estado do Game no <canvas> usando sprites
+export function drawGrid(game, ctx) {
+  const tileSize = 40;
+  
+  for (let y = 0; y < game.size; y++) {
+    for (let x = 0; x < game.size; x++) {
+      ctx.strokeStyle = '#000';
+      ctx.strokeRect(x * tileSize, y * tileSize, tileSize, tileSize);
 
-import { formatTime } from './utils.js';
-
-// Assumimos que sprites.png já está carregado como Image em main.js
-let spriteSheet;
-
-/**
- * Define qual Image usar como spritesheet.
- * Deve ser chamado antes de desenhar.
- */
-export function setSpriteSheet(img) {
-  spriteSheet = img;
-}
-
-export function draw(game, ctx) {
-  const size = game.size;
-  const tileW = ctx.canvas.width / size;
-  const tileH = ctx.canvas.height / size;
-
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
       const tile = game.map[y][x];
-      let sx, sy;
-      // Define origem no spritesheet de acordo com tipo
       switch (tile.type) {
-        case 'bomb':       sx = 32; sy = 0; break;
-        case 'shield':     sx = 64; sy = 0; break;
-        default:           sx = 0;  sy = 0; break;
+        case 'bomb':
+          ctx.fillStyle = tile.revealed ? 'darkred' : 'black';
+          break;
+        case 'shield':
+          ctx.fillStyle = tile.revealed ? 'lightblue' : 'blue';
+          break;
+        case 'start':
+          ctx.fillStyle = 'green';
+          break;
+        case 'end':
+          ctx.fillStyle = 'purple';
+          break;
+        default:
+          ctx.fillStyle = tile.revealed ? '#4a4a6a' : '#2d2d44';
       }
-      // Desenha o sprite do tile
-      ctx.drawImage(spriteSheet, sx, sy, 32, 32, x * tileW, y * tileH, tileW, tileH);
+      
+      ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
     }
   }
 
-  // Desenha o carrinho (sprite na posição 96,0 do sprite sheet)
-  const px = game.player.x * tileW;
-  const py = game.player.y * tileH;
-  ctx.drawImage(spriteSheet, 96, 0, 32, 32, px, py, tileW, tileH);
+  // Carrinho
+  ctx.fillStyle = 'red';
+  ctx.fillRect(
+    game.player.x * tileSize,
+    game.player.y * tileSize,
+    tileSize,
+    tileSize
+  );
 }

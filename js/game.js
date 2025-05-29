@@ -7,10 +7,11 @@ import { randInt } from './utils.js';
 class Tile {
   constructor() {
     this.type = 'normal';
+    this.revealed = false; // Adicionei esta propriedade para controle
   }
   // Método que define o que acontece quando o carrinho interage
   interact(player) {
-    // NormalTile: nada acontece
+    this.revealed = true; // Marca o tile como revelado
   }
 }
 
@@ -21,11 +22,10 @@ class BombTile extends Tile {
     this.type = 'bomb';
   }
   interact(player) {
-    // Se tiver escudo, consome 1 escudo (req 8)
+    super.interact(player);
     if (player.shield > 0) {
       player.shield--;
     } else {
-      // Senão, aplica dano e conta bomba explodida (req 9, 10)
       player.damage++;
       player.bombsExploded++;
     }
@@ -39,7 +39,7 @@ class ForceFieldTile extends Tile {
     this.type = 'shield';
   }
   interact(player) {
-    // Aumenta escudo até um limite (pode definir limit dentro de Player)
+    super.interact(player);
     player.shield++;
   }
 }
@@ -47,35 +47,34 @@ class ForceFieldTile extends Tile {
 // Representa o carrinho/jogador
 class Player {
   constructor(maxDamage) {
-    this.x = 0;              // posição inicial (req 5)
+    this.x = 0;
     this.y = 0;
-    this.maxDamage = maxDamage; // limite de avarias (req 7)
-    this.damage = 0;         // avarias atuais
-    this.shield = 0;         // força do escudo
-    this.steps = 0;          // quantos tijolos andou (req 9)
-    this.bombsExploded = 0;  // bombas detonadas
+    this.maxDamage = maxDamage;
+    this.damage = 0;
+    this.shield = 0;
+    this.steps = 0;
+    this.bombsExploded = 0;
     this.startTime = Date.now();
   }
 
-  // Verifica se o carro ainda está “vivo”
   isAlive() {
     return this.damage < this.maxDamage;
   }
 
-  // Tempo decorrido desde o início (ms)
   elapsedTime() {
-    return Date.now() - this.startTime;
+    return Math.floor((Date.now() - this.startTime) / 1000); // Convertido para segundos
   }
 }
 
 // Gerencia o estado do jogo
 export class Game {
-  constructor(size, maxDamage = 3 ) {
-    this.size = size;                  // tamanho do mapa (req 6)
+  constructor(size, maxDamage = 3) {
+    this.size = size;
     this.player = new Player(maxDamage);
-    this.map = this._createMap(size);  // matriz Tile[][] (req 1,4)
-    this.finishX = size - 1;           // ponto de chegada (req 5)
+    this.map = this._createMap(size);
+    this.finishX = size - 1;
     this.finishY = size - 1;
+    this.gameOver = false; // Adicionei esta propriedade
   }
 
   // Cria e popula o mapa com tiles
@@ -84,7 +83,7 @@ export class Game {
     for (let y = 0; y < size; y++) {
       map[y] = new Array(size);
       for (let x = 0; x < size; x++) {
-        map[y][x] = new Tile();        // começa tudo normal
+        map[y][x] = new Tile();
       }
     }
 
@@ -108,24 +107,26 @@ export class Game {
       do {
         sx = randInt(0, size - 1);
         sy = randInt(0, size - 1);
-      } while (!(map[sy][sx] instanceof Tile));
+      } while ((sx === 0 && sy === 0) || (sx === this.finishX && sy === this.finishY));
       map[sy][sx] = new ForceFieldTile();
     }
+
+    // Adiciona tiles de início e fim
+    map[0][0] = new StartTile();
+    map[size - 1][size - 1] = new EndTile();
 
     return map;
   }
 
-  move(dir, jump = false) {
-    if (!this.player.isAlive()) return;
+  move(dir) { // Removi o parâmetro 'jump'
+    if (this.gameOver || !this.player.isAlive()) return;
 
     // Determina deslocamento
     const delta = { W:[0,-1], A:[-1,0], S:[0,1], D:[1,0] }[dir];
     if (!delta) return;
 
-    // Se for pular, multiplica por 2
-    const step = jump ? 2 : 1;
-    const newX = this.player.x + delta[0] * step;
-    const newY = this.player.y + delta[1] * step;
+    const newX = this.player.x + delta[0];
+    const newY = this.player.y + delta[1];
 
     // Checa limites do mapa
     if (newX < 0 || newX >= this.size || newY < 0 || newY >= this.size) return;
@@ -137,13 +138,24 @@ export class Game {
 
     // Interage com o tile (bombas, escudos ou normal)
     this.map[newY][newX].interact(this.player);
+
+    // Verifica se o jogo acabou
+    if (!this.player.isAlive() || 
+       (this.player.x === this.finishX && this.player.y === this.finishY)) {
+      this.gameOver = true;
+    }
+  }
+
+  // Novo método para pular colisão
+  skipCollision() {
+    if (this.gameOver) return;
+    const currentTile = this.map[this.player.y][this.player.x];
+    currentTile.revealed = true;
   }
 
   // Verifica se o jogo acabou
   isOver() {
-    // Chegou ao final ou carro destruído
-    return (!this.player.isAlive()) ||
-           (this.player.x === this.finishX && this.player.y === this.finishY);
+    return this.gameOver;
   }
 
   // Coleta stats pra renderizar na UI
@@ -153,8 +165,22 @@ export class Game {
       health: this.player.maxDamage - this.player.damage,
       shield: this.player.shield,
       time: this.player.elapsedTime(),
-      bombs: this.player.bombsExploded,
-      success: (this.player.x === this.finishX && this.player.y === this.finishY)
+      bombsExploded: this.player.bombsExploded
     };
+  }
+}
+
+// Novas classes para tiles especiais
+class StartTile extends Tile {
+  constructor() {
+    super();
+    this.type = 'start';
+  }
+}
+
+class EndTile extends Tile {
+  constructor() {
+    super();
+    this.type = 'end';
   }
 }

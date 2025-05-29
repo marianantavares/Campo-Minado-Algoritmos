@@ -1,155 +1,279 @@
-/* Reset e básico */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: 'Segoe UI', Tahoma, sans-serif;
-  background: #1e1e2f;
-  color: #e0e0e0;
+/* ===== FONTES ===== */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* ===== RESET GERAL ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: 'Press Start 2P', cursive;
+  background-color: #1e1e2f;
+  color: #f1f1f1;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  overflow: hidden;
 }
-.screen {
-  width: 100%;
-  max-width: 480px;
-  padding: 20px;
-  text-align: center;
+
+/* ===== CLASSE HIDDEN GERAL ===== */
+.hidden {
+  display: none !important;
 }
-.hidden { display: none; }
 
-/* Títulos */
-h1 { font-size: 2.5rem; margin-bottom: 1rem; color: #4ee1ff; }
-h2 { font-size: 2rem; margin-bottom: 1rem; color: #ffd93d; }
-
-/* Controles iniciais */
-.controls {
+/* ===== CONTAINER PRINCIPAL ===== */
+.screen-container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-.controls label {
-  font-size: 1rem;
-}
-.controls select {
-  padding: 0.5rem;
-  background: #2d2d44;
-  border: 1px solid #555;
-  border-radius: 4px;
-  color: #e0e0e0;
-  font-size: 1rem;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
 }
 
-/* Botões */
-.btn {
-  padding: 0.75rem 1.5rem;
-  margin: 0.5rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-}
-.btn:hover { transform: translateY(-2px); }
-.btn-group { display: flex; justify-content: center; gap: 1rem; }
-.primary {
-  background: #4ee1ff;
-  color: #1e1e2f;
-}
-.primary:hover {
-  background: #3ecfe0;
-}
-.secondary {
-  background: #ffd93d;
-  color: #1e1e2f;
-}
-.secondary:hover {
-  background: #e6c02c;
+/* ===== TELAS PRINCIPAIS ===== */
+#start-screen,
+#game-screen,
+#end-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 800px;
+  background-color: #2d2d44;
+  border: 4px solid #4ee1ff;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 0 30px rgba(0,0,0,0.6);
+  text-align: center;
 }
 
 /* Modal Sobre */
-.modal {
-  display: none;
+#about-modal {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  top: 0; 
+  left: 0;
+  width: 100%; 
+  height: 100%;
   background: rgba(0,0,0,0.6);
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.3s ease-in;
-}
-/* quando tiver classe .show, exibe */
-.modal.show {
   display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
+
 .modal-content {
   background: #2d2d44;
-  padding: 20px;
+  padding: 30px;
   border-radius: 8px;
   width: 90%;
-  max-width: 400px;
-  text-align: left;
+  max-width: 500px;
   color: #e0e0e0;
-  animation: slideIn 0.3s ease-out;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  border: 2px solid #ffd93d;
+  text-align: left;
 }
+
 .close-btn {
   float: right;
   font-size: 1.5rem;
   cursor: pointer;
+  color: #ffd93d;
+  margin-bottom: 15px;
 }
 
-/* Jogo */
-.game-area {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-  justify-content: center;
+/* TÍTULO */
+h1, h2 {
+  font-size: 1.5rem;
+  color: #4ee1ff;
+  margin-bottom: 2rem;
 }
-#gameCanvas {
-  background: #2d2d44;
-  border: 4px solid #555;
-  box-shadow: 0 0 10px #000;
-  animation: slideIn 0.5s ease-in-out;
+
+#end-screen h2 {
+  margin-bottom: 1.5rem;
 }
-#info-panel {
+
+/* ===== MENU OPTIONS ===== */
+.menu-options {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+/* LABEL DO SELECT */
+.menu-options label {
+  font-size: 0.7rem;
   text-align: left;
-  font-size: 1rem;
+  color: #ffffffcc;
 }
+
+/* SELECT DO TAMANHO DO MAPA */
+.menu-options select {
+  padding: 0.8rem 0.7rem;
+  background-color: #1e1e2f;
+  color: #fff;
+  border: 2px solid #4ee1ff;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  outline: none;
+  width: 100%;
+}
+
+/* BOTÕES */
+.btn {
+  padding: 0.9rem;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+  font-family: 'Press Start 2P', cursive;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.15);
+}
+
+/* COR DOS BOTÕES */
+.primary {
+  background-color: #4ee1ff;
+  color: #1e1e2f;
+}
+
+.secondary {
+  background-color: #ffd93d;
+  color: #1e1e2f;
+}
+
+/* ===== TELA DE JOGO ===== */
+#game-screen {
+  padding: 30px;
+}
+
+.game-area {
+  display: flex;
+  gap: 30px;
+  width: 100%;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+#gameCanvas {
+  border: 3px solid #4ee1ff;
+  border-radius: 8px;
+  background-color: #1e1e2f;
+  max-width: 100%;
+}
+
+#info-panel {
+  background-color: #2a2a3f;
+  padding: 25px;
+  border-radius: 10px;
+  min-width: 220px;
+  border: 2px solid #ffd93d;
+  font-size: 0.9rem;
+}
+
 #info-panel div {
-  padding: 4px 0;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
-.result {
-  margin: 1rem 0;
-  font-size: 1.25rem;
-  font-weight: bold;
+
+#info-panel strong {
   color: #4ee1ff;
 }
 
-/* Animações */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes slideIn {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+/* ===== TELA FINAL ===== */
+#end-screen {
+  padding: 30px;
 }
 
-/* Responsividade */
-@media (max-width: 600px) {
-  h1 { font-size: 2rem; }
-  h2 { font-size: 1.5rem; }
-  .screen { padding: 10px; }
-  .btn { font-size: 0.875rem; padding: 0.5rem 1rem; }
-  #gameCanvas { width: 100%; height: auto; }
-  #info-panel { align-items: center; }
+#end-screen div {
+  margin-bottom: 1.2rem;
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
-@media (max-width: 400px) {
-  h1 { font-size: 1.75rem; }
-  h2 { font-size: 1.25rem; }
-  .btn { font-size: 0.75rem; padding: 0.5rem; }
-  #info-panel { font-size: 0.875rem; }
+
+#end-screen strong {
+  color: #4ee1ff;
+}
+
+.result {
+  font-size: 1.2rem !important;
+  color: #ffd93d !important;
+  margin: 2rem 0;
+  text-align: center;
+  width: 100%;
+}
+
+/* ===== GRUPO DE BOTÕES ===== */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  #start-screen,
+  #game-screen,
+  #end-screen {
+    padding: 1.5rem;
+    width: 95%;
+  }
+  
+  .game-area {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  #info-panel {
+    width: 100%;
+    max-width: 320px;
+  }
+  
+  h1, h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .btn {
+    padding: 0.8rem;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-options select,
+  .btn {
+    padding: 0.7rem;
+  }
+  
+  #info-panel {
+    padding: 15px;
+  }
+  
+  #end-screen div {
+    flex-direction: column;
+    gap: 5px;
+  }
 }

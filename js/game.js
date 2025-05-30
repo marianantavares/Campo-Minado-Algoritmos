@@ -175,6 +175,7 @@ class StartTile extends Tile {
   constructor() {
     super();
     this.type = 'start';
+    this.revealed = true;
   }
 }
 
@@ -182,5 +183,6 @@ class EndTile extends Tile {
   constructor() {
     super();
     this.type = 'end';
+    this.revealed = true;
   }
 }

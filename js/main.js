@@ -3,8 +3,40 @@ import { Game } from './game.js';
 import { formatTime, randInt } from './utils.js';
 import { drawGrid } from './renderer.js';
 
+const SPRITES = {
+  tile: 'assets/tileDefault.png',
+  bomb: 'assets/bomb.png',
+  shield: 'assets/shield.png',
+  start: 'assets/tileStart.png',
+  end: 'assets/tileEnd.png',
+  car: 'assets/car.png'
+};
+
+let sprites = {};
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+async function loadSprites() {
+  const promises = Object.entries(SPRITES).map(([key, src]) => 
+    loadImage(src).then(img => { sprites[key] = img; })
+  );
+  await Promise.all(promises);
+  console.log('Todas as sprites carregadas!');
+}
+
+
 // 1. Garanta que o DOM está completamente carregado
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // Carregue as sprites antes de permitir jogar
+  await loadSprites();
+
   // 2. Elementos DOM - verifique se todos existem
   const startScreen = document.getElementById('start-screen');
   const gameScreen = document.getElementById('game-screen');
@@ -90,10 +122,11 @@ document.addEventListener('DOMContentLoaded', () => {
       gameLoopId = requestAnimationFrame(gameLoop);
     }
     
-    // Limpa e desenha
+    // Limpa e desenha com as sprites
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawGrid(game, ctx);
+    drawGrid(game, ctx, sprites); // Passar sprites como parâmetro
     updateStats();
+
     
     // Verifica fim de jogo
     if (game.isOver()) {

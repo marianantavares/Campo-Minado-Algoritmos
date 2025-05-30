@@ -1,40 +1,72 @@
 // renderer.js
-export function drawGrid(game, ctx) {
+export function drawGrid(game, ctx, sprites) {
   const tileSize = 40;
-  
+  const spriteSize = 32;
+
   for (let y = 0; y < game.size; y++) {
     for (let x = 0; x < game.size; x++) {
-      ctx.strokeStyle = '#000';
-      ctx.strokeRect(x * tileSize, y * tileSize, tileSize, tileSize);
+      ctx.drawImage(
+        sprites.tile,
+        x * tileSize,
+        y * tileSize,
+        tileSize,
+        tileSize
+      );
 
       const tile = game.map[y][x];
-      switch (tile.type) {
-        case 'bomb':
-          ctx.fillStyle = tile.revealed ? 'darkred' : 'black';
-          break;
-        case 'shield':
-          ctx.fillStyle = tile.revealed ? 'lightblue' : 'blue';
-          break;
-        case 'start':
-          ctx.fillStyle = 'green';
-          break;
-        case 'end':
-          ctx.fillStyle = 'purple';
-          break;
-        default:
-          ctx.fillStyle = tile.revealed ? '#4a4a6a' : '#2d2d44';
+
+      if (tile.revealed) {
+        switch (tile.type) {
+          case 'bomb':
+            ctx.drawImage(
+              sprites.bomb,
+              x * tileSize + (tileSize - spriteSize) / 2,
+              y * tileSize + (tileSize - spriteSize) / 2,
+              spriteSize,
+              spriteSize
+            );
+            break;
+          case 'shield':
+            ctx.drawImage(
+              sprites.shield,
+              x * tileSize + (tileSize - spriteSize) / 2,
+              y * tileSize + (tileSize - spriteSize) / 2,
+              spriteSize,
+              spriteSize
+            );
+            break;
+          case 'start':
+            ctx.drawImage(
+              sprites.start,
+              x * tileSize,
+              y * tileSize,
+              tileSize,
+              tileSize
+            );
+            break;
+          case 'end':
+            ctx.drawImage(
+              sprites.end,
+              x * tileSize,
+              y * tileSize,
+              tileSize,
+              tileSize
+            );
+            break;
+        }
       }
-      
-      ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+
+      ctx.strokeStyle = '#000';
+      ctx.strokeRect(x * tileSize, y * tileSize, tileSize, tileSize);
     }
   }
 
-  // Carrinho
-  ctx.fillStyle = 'red';
-  ctx.fillRect(
-    game.player.x * tileSize,
-    game.player.y * tileSize,
-    tileSize,
-    tileSize
+  // Carrinho (após desenhar todos os tiles)
+  ctx.drawImage(
+    sprites.car,
+    game.player.x * tileSize + (tileSize - spriteSize) / 2,
+    game.player.y * tileSize + (tileSize - spriteSize) / 2,
+    spriteSize,
+    spriteSize
   );
 }

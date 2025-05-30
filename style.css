@@ -18,6 +18,10 @@ html, body {
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  background-image: url('assets/background.gif');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* ===== CLASSE HIDDEN GERAL ===== */
@@ -76,15 +80,16 @@ html, body {
   max-width: 500px;
   color: #e0e0e0;
   box-shadow: 0 0 20px rgba(0,0,0,0.5);
-  border: 2px solid #ffd93d;
+  border: 2px solid #f76f20;
   text-align: left;
+  line-height: 1.7;
 }
 
 .close-btn {
   float: right;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #ffd93d;
+  color: #f76f20;
   margin-bottom: 15px;
 }
 
@@ -112,7 +117,7 @@ h1, h2 {
 .menu-options label {
   font-size: 0.7rem;
   text-align: left;
-  color: #ffffffcc;
+  color: #ffffff;
 }
 
 /* SELECT DO TAMANHO DO MAPA */
@@ -148,18 +153,22 @@ h1, h2 {
 
 /* COR DOS BOTÕES */
 .primary {
-  background-color: #4ee1ff;
-  color: #1e1e2f;
+  background-color: #1f73bd;
+  color: #ffffff;
 }
 
 .secondary {
-  background-color: #ffd93d;
-  color: #1e1e2f;
+  background-color: #f76f20;
+  color: #ffffff;
 }
 
 /* ===== TELA DE JOGO ===== */
 #game-screen {
-  padding: 30px;
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 30px 0 0 0;
+  color: #f76f20; /* cor do texto */
 }
 
 .game-area {
@@ -167,23 +176,24 @@ h1, h2 {
   gap: 30px;
   width: 100%;
   justify-content: center;
-  align-items: flex-start;
-  flex-wrap: wrap;
+  align-items: center;
+  flex-wrap: nowrap;
 }
 
 #gameCanvas {
+  background: none;
   border: 3px solid #4ee1ff;
   border-radius: 8px;
-  background-color: #1e1e2f;
   max-width: 100%;
 }
 
 #info-panel {
-  background-color: #2a2a3f;
-  padding: 25px;
-  border-radius: 10px;
-  min-width: 220px;
-  border: 2px solid #ffd93d;
+  background: none;
+  flex-shrink: 0;
+  border: none;
+  box-shadow: none;
+  color: #153067; /* cor do texto */
+  padding: 0;
   font-size: 0.9rem;
 }
 
@@ -195,7 +205,7 @@ h1, h2 {
 }
 
 #info-panel strong {
-  color: #4ee1ff;
+  color: #153067;
 }
 
 /* ===== TELA FINAL ===== */
@@ -230,50 +240,4 @@ h1, h2 {
   gap: 15px;
   width: 100%;
   margin-top: 20px;
-}
-
-/* ===== RESPONSIVIDADE ===== */
-@media (max-width: 768px) {
-  #start-screen,
-  #game-screen,
-  #end-screen {
-    padding: 1.5rem;
-    width: 95%;
-  }
-  
-  .game-area {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  #info-panel {
-    width: 100%;
-    max-width: 320px;
-  }
-  
-  h1, h2 {
-    font-size: 1.2rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .btn {
-    padding: 0.8rem;
-    font-size: 0.7rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .menu-options select,
-  .btn {
-    padding: 0.7rem;
-  }
-  
-  #info-panel {
-    padding: 15px;
-  }
-  
-  #end-screen div {
-    flex-direction: column;
-    gap: 5px;
-  }
 }

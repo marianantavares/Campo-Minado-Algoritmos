@@ -25,7 +25,7 @@
       <button id="aboutBtn" class="btn secondary pixel-font">Sobre</button>
     </div>
   </div>
-
+  
   <!-- TELA DE SOBRE -->
   <div id="about-modal" class="modal hidden">
     <div class="modal-content">
@@ -55,6 +55,19 @@
         <div><strong>Tempo:</strong> <span id="timer">00:00</span></div>
         <button id="skipBtn" class="btn secondary">Pular</button>
       </div>
+    </div>
+  </div>
+  <!-- Modal customizado para escolher direção -->
+  <div id="jumpModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Escolha a direção para pular</h3>
+      <div class="jump-buttons">
+        <button data-dir="W">Cima - W</button>
+        <button data-dir="A">Esquerda - A</button>
+        <button data-dir="S">Baixo - S</button>
+        <button data-dir="D">Direita - D</button>
+      </div>
+      <button id="closeJumpModal">Cancelar</button>
     </div>
   </div>
 

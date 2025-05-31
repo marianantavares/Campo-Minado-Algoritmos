@@ -153,6 +153,35 @@ export class Game {
     currentTile.revealed = true;
   }
 
+  // Novo método para pular um bloco em qualquer direção
+  jump(dir) {
+    if (this.gameOver || !this.player.isAlive()) return;
+
+    // Determina deslocamento
+    const delta = { W:[0,-1], A:[-1,0], S:[0,1], D:[1,0] }[dir];
+    if (!delta) return;
+
+    const newX = this.player.x + delta[0] * 2;
+    const newY = this.player.y + delta[1] * 2;
+
+    // Checa limites do mapa
+    if (newX < 0 || newX >= this.size || newY < 0 || newY >= this.size) return;
+
+    // Atualiza posição e estatísticas
+    this.player.x = newX;
+    this.player.y = newY;
+    this.player.steps++;
+
+    // Interage apenas com o tile de destino
+    this.map[newY][newX].interact(this.player);
+
+    // Verifica se o jogo acabou
+    if (!this.player.isAlive() || 
+       (this.player.x === this.finishX && this.player.y === this.finishY)) {
+      this.gameOver = true;
+    }
+  }
+
   // Verifica se o jogo acabou
   isOver() {
     return this.gameOver;

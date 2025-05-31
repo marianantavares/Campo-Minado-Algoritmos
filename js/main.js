@@ -171,17 +171,34 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // 11. Botão Pular
+    // ...existing code...
+  
+  const jumpModal = document.getElementById('jumpModal');
+  const closeJumpModal = document.getElementById('closeJumpModal');
+  
+  // 11. Botão Pular
   skipBtn.addEventListener('click', () => {
     if (game && !game.isOver()) {
-      game.skipCollision();
-      updateStats();
+      jumpModal.classList.remove('hidden');
     }
   });
-
-  // 12. Botão Sobre
-  aboutBtn.addEventListener('click', () => {
-    aboutModal.classList.remove('hidden');
+  
+  // Evento para botões de direção
+  jumpModal.querySelectorAll('.jump-buttons button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dir = btn.getAttribute('data-dir');
+      game.jump(dir);
+      updateStats();
+      jumpModal.classList.add('hidden');
+    });
   });
+  
+  // Evento para cancelar
+  closeJumpModal.addEventListener('click', () => {
+    jumpModal.classList.add('hidden');
+  });
+  
+  // ...existing code...
 
   // 13. Fechar Modal
   closeModal.addEventListener('click', () => {

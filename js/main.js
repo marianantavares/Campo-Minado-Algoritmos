@@ -58,11 +58,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const timerEl = document.getElementById('timer');
   
   const skipBtn = document.getElementById('skipBtn');
-  
-  // 3. Botão Voltar
-  const backBtn = document.createElement('button');
-  backBtn.innerText = 'Voltar';
-  backBtn.className = 'btn secondary';
+
   
   let game = null;
   let gameLoopId = null;
@@ -81,13 +77,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Inicializa o jogo
     game = new Game(size, 3); // Cria uma nova instância do jogo com o tamanho selecionado e dano máximo de 3
     resizeCanvas(size); // Redimensiona o canvas para o tamanho do jogo
-    
-    // Adiciona botão Voltar
-    const infoPanel = document.getElementById('info-panel'); //
-    if (!infoPanel.querySelector('.btn.secondary')) {
-      infoPanel.appendChild(backBtn);
-    }
-    
+        
     // Inicia o game loop
     lastTime = performance.now(); 
     if (gameLoopId) cancelAnimationFrame(gameLoopId);
@@ -102,13 +92,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log(`Canvas redimensionado para: ${canvas.width}x${canvas.height}`); 
   }
 
-  // 6. Botão Voltar
-  backBtn.addEventListener('click', () => {
-    gameScreen.classList.add('hidden');
-    startScreen.classList.remove('hidden');
-    if (gameLoopId) cancelAnimationFrame(gameLoopId);
-    gameLoopId = null;
-  });
 
   // 7. Game loop corrigido
   function gameLoop(timestamp) {
@@ -233,4 +216,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   console.log('Script carregado com sucesso!'); // Debug
+
+  if (aboutBtn && aboutModal) {
+    aboutBtn.addEventListener('click', () => {
+      aboutModal.classList.remove('hidden');
+    });
+  }
 });

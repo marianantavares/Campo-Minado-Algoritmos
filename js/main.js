@@ -3,7 +3,7 @@ import { Game } from './game.js';
 import { formatTime, randInt } from './utils.js';
 import { drawGrid } from './renderer.js';
 
-const SPRITES = {
+const SPRITES = { // carrega as imagens que serao usadas no jogo
   tile: 'assets/tileDefault.png',
   bomb: 'assets/bomb.png',
   shield: 'assets/shield.png',
@@ -12,18 +12,18 @@ const SPRITES = {
   car: 'assets/car.png'
 };
 
-let sprites = {};
+let sprites = {}; // Objeto para armazenar as sprites carregadas
 
-function loadImage(src) {
+function loadImage(src) { //se encarrega de carregar as imagens
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.onload = () => resolve(img);
+    img.onload = () => resolve(img); //se der eerro, resolve a promise com a imagem carregada
     img.onerror = reject;
     img.src = src;
   });
 }
 
-async function loadSprites() {
+async function loadSprites() { // Função para carregar todas as sprites
   const promises = Object.entries(SPRITES).map(([key, src]) => 
     loadImage(src).then(img => { sprites[key] = img; })
   );
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Carregue as sprites antes de permitir jogar
   await loadSprites();
 
-  // 2. Elementos DOM - verifique se todos existem
+  // 2. Elementos DOM  - carrega os elementos do DOM que serão usados no jogo
   const startScreen = document.getElementById('start-screen');
   const gameScreen = document.getElementById('game-screen');
   const endScreen = document.getElementById('end-screen');
@@ -68,38 +68,38 @@ document.addEventListener('DOMContentLoaded', async () => {
   let gameLoopId = null;
   let lastTime = 0;
 
-  // 4. Evento do botão Jogar - versão corrigida
-  startBtn.addEventListener('click', () => {
-    console.log('Botão Jogar clicado!'); // Debug
+  // botao jogar
+  startBtn.addEventListener('click', () => { // quando clicar no botão Jogar
+    console.log('Botão Jogar clicado!'); 
     
-    startScreen.classList.add('hidden');
-    gameScreen.classList.remove('hidden');
+    startScreen.classList.add('hidden'); // Esconde a tela inicial
+    gameScreen.classList.remove('hidden');// Mostra a tela do jogo
     
     const size = parseInt(sizeSelect.value, 10);
-    console.log(`Iniciando jogo com tamanho: ${size}`); // Debug
+    console.log(`Iniciando jogo com tamanho: ${size}`);
     
     // Inicializa o jogo
-    game = new Game(size, 3);
-    resizeCanvas(size);
+    game = new Game(size, 3); // Cria uma nova instância do jogo com o tamanho selecionado e dano máximo de 3
+    resizeCanvas(size); // Redimensiona o canvas para o tamanho do jogo
     
     // Adiciona botão Voltar
-    const infoPanel = document.getElementById('info-panel');
+    const infoPanel = document.getElementById('info-panel'); //
     if (!infoPanel.querySelector('.btn.secondary')) {
       infoPanel.appendChild(backBtn);
     }
     
     // Inicia o game loop
-    lastTime = performance.now();
+    lastTime = performance.now(); 
     if (gameLoopId) cancelAnimationFrame(gameLoopId);
     gameLoopId = requestAnimationFrame(gameLoop);
   });
 
   // 5. Função resizeCanvas
-  function resizeCanvas(size) {
+  function resizeCanvas(size) { // Redimensiona o canvas de acordo com o tamanho do jogo
     const tileSize = 40;
-    canvas.width = size * tileSize;
+    canvas.width = size * tileSize; // Define a largura do canvas
     canvas.height = size * tileSize;
-    console.log(`Canvas redimensionado para: ${canvas.width}x${canvas.height}`); // Debug
+    console.log(`Canvas redimensionado para: ${canvas.width}x${canvas.height}`); 
   }
 
   // 6. Botão Voltar

@@ -92,9 +92,9 @@ export class Game {
       }
     }
 
-    // Sorteia bombas (20% dos tijolos)
+    // Sorteia bombas (25% dos tijolos)
     const total = size * size;
-    const numBombs = Math.floor(total * 0.2);
+    const numBombs = Math.floor(total * 0.25);
     
     for (let i = 0; i < numBombs; i++) { // sorteia 20% dos tijolos para serem bombas
       

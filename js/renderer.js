@@ -2,11 +2,12 @@
 export function drawGrid(game, ctx, sprites) {
   const tileSize = 40;
   const spriteSize = 32;
+  
 
   for (let y = 0; y < game.size; y++) {
     for (let x = 0; x < game.size; x++) {
         // desenha cada célula aqui
-  }
+  
       ctx.drawImage(
         sprites.tile,
         x * tileSize,
@@ -61,13 +62,11 @@ export function drawGrid(game, ctx, sprites) {
             break;
         }
       }
-
       //Desenha as “linhas” de contorno em cada célula
       ctx.strokeStyle = '#000';
       ctx.strokeRect(x * tileSize, y * tileSize, tileSize, tileSize);
     }
-  }
-
+ 
   // Carrinho (após desenhar todos os tiles)
   ctx.drawImage(
     sprites.car,
@@ -76,3 +75,5 @@ export function drawGrid(game, ctx, sprites) {
     spriteSize,
     spriteSize
   );
+ }
+}
